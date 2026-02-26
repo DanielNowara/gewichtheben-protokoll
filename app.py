@@ -8,24 +8,23 @@ st.title("🏋️‍♂️ Gewichtheben Wettkampf-Protokoll")
 # --- DATEN LADEN ---
 @st.cache_data
 def load_relativ_tables():
-pfad_m = "tabelle_m.csv"
-pfad_w = "tabelle_w.csv"
+    pfad_m = "tabelle_m.csv"
+    pfad_w = "tabelle_w.csv"
     
     try:
-        # skiprows=2 überspringt die ersten beiden Zeilen (die Überschriften wie ",männlich" und "KG,")
+        # skiprows=2 überspringt die ersten beiden Zeilen
         df_m = pd.read_csv(pfad_m, names=["KG", "Abzug"], skiprows=2)
         df_w = pd.read_csv(pfad_w, names=["KG", "Abzug"], skiprows=2)
         
-        # Formatierung reparieren: Kommas zu Punkten machen und als Zahl speichern
+        # Formatierung reparieren
         for df in [df_m, df_w]:
             df['KG'] = df['KG'].astype(str).str.replace(',', '.').astype(float)
             df['Abzug'] = df['Abzug'].astype(str).str.replace(',', '.').astype(float)
-            # Zur Sicherheit nach Gewicht aufsteigend sortieren
             df.sort_values('KG', inplace=True)
             
         return df_m, df_w
     except FileNotFoundError:
-        st.error("Fehler: Die Relativtabellen konnten unter den angegebenen Pfaden nicht gefunden werden!")
+        st.error("Fehler: Die Relativtabellen konnten nicht gefunden werden!")
         return pd.DataFrame(), pd.DataFrame()
     except Exception as e:
         st.error(f"Fehler beim Verarbeiten der Tabellen: {e}")
@@ -127,4 +126,5 @@ if len(st.session_state.athleten) > 0:
         mime='text/csv',
     )
 else:
+
     st.info("Noch keine Athleten eingetragen.")
